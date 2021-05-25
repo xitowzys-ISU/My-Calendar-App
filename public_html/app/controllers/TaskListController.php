@@ -29,10 +29,18 @@ class TaskListController extends Controller
             
         } else 
         {
-            if(array_key_exists("id", $_POST))
+            if(array_key_exists("deleteTask", $_POST))
             {
                 // TODO: Сделать проверку на пользователя
-                $this->model->deleteTask($_POST);   
+                $this->model->deleteTask($_POST['deleteTask']);   
+            }
+            if(array_key_exists("successTask", $_POST))
+            {
+                $this->model->setTaskStatus($_POST['successTask'], 3);
+            }
+            if(array_key_exists("unSuccessTask", $_POST))
+            {
+                $this->model->setTaskStatus($_POST['unSuccessTask'], 1);
             }
             if(array_key_exists("logout", $_POST))
                 $this->model->logout();
@@ -40,38 +48,41 @@ class TaskListController extends Controller
                 $this->status = 2;
             else if (array_key_exists("completedTasks", $_POST))
                 $this->status = 3;
-            else if (array_key_exists("tasksForToday", $_POST))
+            else if (array_key_exists("dateTasks", $_POST))
                 $this->status = 4;
             else
                 $this->status = 1;
         }
 
-        $tasks = $this->model->getTasks($_SESSION['user']['id'], $this->status);
+        $this->data['{TASKS_TABLE}'] = $this->generatingForm($this->model->getTasks($_POST, $_SESSION['user']['id'], $this->status));
 
-        $tasksTableShort = "";
+        $this->view->render($this->data);
+    }
 
+    public function generatingForm($tasks) {
         $i = 0;
+        $tasksTable = "";
+
         foreach ($tasks as $key => $value) {
-            $tasksTableShort .= '<tr data-bs-toggle="modal" data-bs-target="#modal' . ++$i . '">';
+            $tasksTable .= '<tr data-bs-toggle="modal" data-bs-target="#modal' . ++$i . '">';
 
             foreach ($value as $keys => $values) {
                 if ($keys === 'id' || $keys === 'user_id' || $keys === 'created_at' || $keys === 'status' || $keys === 'comment' || $keys === 'deleted')
                     continue;
 
-                $tasksTableShort .= '<td>' . $values . '</td>';
+                $tasksTable .= '<td>' . $values . '</td>';
             }
-            $tasksTableShort .= '</tr>';
+            $tasksTable .= '</tr>';
 
-            $id = $value['id'];
-            $topic = $value['topic'];
-            $type = $value['type'];
-            $location = $value['location'];
-            $start_date = $value['start_date'];
-            $start_time = $value['start_time'];
-            $duration = $value['duration'];
-            $comment = $value['comment'];
+            extract($value, EXTR_OVERWRITE, "extract");
 
-            $tasksTableShort .= <<<XML
+            $btnSuccess = "";
+            if($value['status'] === '3')
+                $btnSuccess = '<form action="/task-list" method="POST"><button type="submit" name="unSuccessTask" value="' . $id . '" class="btn btn-primary">Отметить как текущее</button></form>';
+            else
+                $btnSuccess = '<form action="/task-list" method="POST"><button type="submit" name="successTask" value="' . $id . '" class="btn btn-success">Отметить как выполненно</button></form>';    
+   
+            $tasksTable .= <<<XML
             <div class="modal fade" id="modal$i" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                     <div class="modal-content">
@@ -88,9 +99,9 @@ class TaskListController extends Controller
                             <p>Комментарий: $comment</p>
                         </div>
                         <div class="modal-footer">
+                            $btnSuccess
                             <form action="/editor/edit-task" method="GET"><button type="submit" name="id" value="$id" class="btn btn-warning">Изменить</button></form>
-                            <form action="/task-list" method="POST"><button type="submit" name="id" value="$id" class="btn btn-danger">Удалить</button></form>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            <form action="/task-list" method="POST"><button type="submit" name="deleteTask" value="$id" class="btn btn-danger">Удалить</button></form>
                         </div>
                     </div>
                 </div>
@@ -98,8 +109,6 @@ class TaskListController extends Controller
             XML;
         }
 
-        $this->data['{TASKS_TABLE_SHORT}'] = $tasksTableShort;
-
-        $this->view->render($this->data);
+        return $tasksTable;
     }
 }

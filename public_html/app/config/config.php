@@ -1,9 +1,9 @@
 <?php
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'my_calendar_app');
-define('DB_USER', 'raidemot');
-define('DB_PASS', 'Yiczxsjo552880!');
+define('DB_HOST', '');
+define('DB_NAME', '');
+define('DB_USER', '');
+define('DB_PASS', '');
 
 /**
  * Root path to the application

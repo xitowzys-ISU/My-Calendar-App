@@ -14,13 +14,17 @@
             </div>
         </div>
         <form action="/task-list" method="POST">
-            <div class="filter">
-                <button type="submit" name="currentTasks" class="btn btn-primary btn-sm">Текущие задачи</button>
-                <button type="submit" name="overdueTasks" class="btn btn-danger btn-sm">Просроченные задачи</button>
-                <button type="submit" name="completedTasks" class="btn btn-success btn-sm">Выполненные задачи</button>
-                <button type="submit" name="tasksForToday" value="tasks-for-today"
-                    class="btn btn-secondary btn-sm">Задачи на сегодня</button>
-            </div>
+            <div class="filter-panel">
+                <div class="filter">
+                  <button type="submit" name="currentTasks" class="btn btn-primary btn-sm">Текущие задачи</button>
+                  <button type="submit" name="overdueTasks" class="btn btn-danger btn-sm">Просроченные задачи</button>
+                  <button type="submit" name="completedTasks" class="btn btn-success btn-sm">Выполненные задачи</button>
+                </div>
+                <div class="searchDate">
+                  <input type="text" id="filter-date-pick" name="date" placeholder="Дата" required>
+                  <button type="submit" name="dateTasks" class="btn btn-primary btn-sm">Показать</button>
+                </div>
+              </div>
         </form>
         <table class="task-table">
             <thead>
@@ -34,7 +38,7 @@
                 </tr>
             </thead>
             <tbody>
-                {TASKS_TABLE_SHORT}
+                {TASKS_TABLE}
             </tbody>
         </table>
 

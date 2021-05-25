@@ -26,10 +26,6 @@ class TaskList extends Model
         }
     }
 
-    public function checkTasks()
-    {
-    }
-
     /**
      * Getting all the tasks of a individual user
      *
@@ -37,17 +33,17 @@ class TaskList extends Model
      * @param integer $status
      * @return array
      */
-    public function getTasks(int $userId, int $status)
+    public function getTasks(array $data, int $userId, int $status)
     {
         $result = [];
 
-        $this->changeStatus($userId);
+        $this->checkingForDelinquency($userId);
 
         if (!($status === 4)) {
             $sql = "SELECT * FROM `all_tasks` WHERE `status` LIKE " . $status . " AND `user_id` LIKE " . $userId . " AND `deleted` LIKE 0;";
         } else {
-            // ? Здесь должен быть выбор по конкретной дате
-            $sql = "SELECT * FROM `all_tasks` WHERE `start_date` LIKE DATE_FORMAT(DATE(NOW()), '%d.%m.%Y' );";
+            $sql = "SELECT * FROM `all_tasks` WHERE `start_date` LIKE '" . $data['date'] . "' AND `user_id` LIKE " . $userId . ";";
+            
         }
 
 
@@ -60,25 +56,41 @@ class TaskList extends Model
     }
 
     /**
-     * Sets the delete status
+     * Set the task status
      *
-     * @param array $data
+     * @param int $id
+     * @param int $idStatus
      * @return void
      */
-    public function deleteTask($data)
+    public function setTaskStatus(int $id, int $idStatus)
     {
-        $this->db->exec('UPDATE `tasks` SET `deleted` = 1 WHERE `tasks`.`id` LIKE ' . $data['id'] . ';');
+        $this->db->exec('UPDATE `tasks` SET `task_status_id` = ' . $idStatus .' WHERE `tasks`.`id` LIKE ' . $id . ';');
     }
 
     /**
-     * Change the status to past due
+     * Sets the delete status
+     *
+     * @param int $id
+     * @return void
+     */
+    public function deleteTask(int $id)
+    {
+        $this->db->exec('UPDATE `tasks` SET `deleted` = 1 WHERE `tasks`.`id` LIKE ' . $id . ';');
+    }
+
+    /**
+     * Change the status to past due if the task date has expired
      *
      * @param integer $userId
      * @return void
      */
-    public function changeStatus(int $userId)
+    public function checkingForDelinquency(int $userId)
     {
         $this->db->exec('UPDATE `tasks` SET `task_status_id` = 2 WHERE `tasks`.`id` IN (SELECT `id` FROM `tasks` WHERE NOT(ADDTIME(`date_and_time`, ADDTIME(`duration`, "00:10:00")) > NOW()) AND `task_status_id` LIKE 1 AND `user_id` LIKE ' . $userId . ');');
+    }
+
+    public function checkStatus($int) {
+
     }
 
     /**
