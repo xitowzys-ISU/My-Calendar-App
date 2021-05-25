@@ -25,7 +25,7 @@ class Router
 
     public function coincidence()
     {
-        $uri = trim($_SERVER['REQUEST_URI'], '/');
+        $uri = strtok(trim($_SERVER['REQUEST_URI'], '/'), '?');
         foreach ($this->routes as $route => $params) {
             if (preg_match('#^' . $route . '$#', $uri, $matches)) {
                 $this->params = $params;

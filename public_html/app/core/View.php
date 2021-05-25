@@ -54,8 +54,7 @@ class View
      */
     public function render($data = [], $body = '')
     {
-        $data['{TEMPLATE_SRC}'] = TEMPLATES_DIR . TEMPLATE;
-        $data['{TEMPLATE_ADMIN_SRC}'] = TEMPLATES_DIR . TEMPLATE_DIR_ADMIN_PANEL;
+        $data['{TEMPLATE_SRC}'] = '../' . TEMPLATES_DIR . TEMPLATE;
 
         $path = '';
         $content = '';

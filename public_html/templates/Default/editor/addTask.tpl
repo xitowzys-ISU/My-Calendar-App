@@ -1,6 +1,6 @@
 <body>
     <div class="panel">
-        <form action="/editor" method="POST">
+        <form action="/editor/add-task" method="POST">
             <div class="mb-3">
                 {ERROR_TOPIC}
                 <label class="form-label">Тема</label>
@@ -19,29 +19,33 @@
             </div>
 
             <div class="mb-3">
+                {ERROR_PLACE}
                 <label class="form-label">Место</label>
                 <input type="text" class="form-control" name="place" placeholder="Россия, г. Петрозаводск, Молодежный пер., д. 23 кв.196">
             </div>
 
             <div class="mb-3">
+                {ERROR_DATE}
                 <label class="form-label">Дата</label>
                 <input type="text" class="form-control" id="date" name="datetime" placeholder="Дата" required>
             </div>
 
             <div class="mb-3">
+                {ERROR_DURATION}
                 <label class="form-label">Длительность</label>
                 <input type="text" class="form-control" id="duration" name="duration" placeholder="Длительность"
                     required>
             </div>
 
             <div class="mb-3">
+                {ERROR_COMMENT}
                 <label class="form-label">Комментарий</label>
                 <textarea class="form-control" name="comment" rows="3"></textarea>
             </div>
 
             <div>
-                <button type="submit" class="btn btn-success">Добавить</button>
-                <button type="button" class="btn btn-danger">Отмена</button>
+                <button type="submit" name="addTask" class="btn btn-success">Добавить</button>
+                <a href="/"><button type="button" class="btn btn-danger">Отмена</button></a>
             </div>
 
     </form>

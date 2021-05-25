@@ -10,12 +10,20 @@ return [
         'controller' => 'taskList',
         'action' => 'index'
     ],
-    'editor' => [
+    'editor/add-task' => [
         'controller' => 'editor',
-        'action' => 'index'
+        'action' => 'addTask'
+    ],
+    'editor/edit-task' => [
+        'controller' => 'editor',
+        'action' => 'editTask'
     ],
     'auth' => [
         'controller' => 'auth',
+        'action' => 'index'
+    ],
+    'registration' => [
+        'controller' => 'registration',
         'action' => 'index'
     ]
 ];

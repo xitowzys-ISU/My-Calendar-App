@@ -14,11 +14,28 @@ class TaskListController extends Controller
     {
         $this->data['{TITLE}'] = 'Мой календарь';
 
+        session_start();
+
+        if(!isset($_SESSION['user'])) {
+            header('Location: /auth');
+            exit();
+        } else {
+            $this->data['{SESSION_USER}'] = $_SESSION['user']['login'];
+        }
+
+
         if (empty($_POST)) {
             $this->status = 1;
             
         } else 
         {
+            if(array_key_exists("id", $_POST))
+            {
+                // TODO: Сделать проверку на пользователя
+                $this->model->deleteTask($_POST);   
+            }
+            if(array_key_exists("logout", $_POST))
+                $this->model->logout();
             if(array_key_exists("overdueTasks", $_POST))
                 $this->status = 2;
             else if (array_key_exists("completedTasks", $_POST))
@@ -27,10 +44,9 @@ class TaskListController extends Controller
                 $this->status = 4;
             else
                 $this->status = 1;
-            // debug($_POST);
         }
 
-        $tasks = $this->model->getTasks($this->status);
+        $tasks = $this->model->getTasks($_SESSION['user']['id'], $this->status);
 
         $tasksTableShort = "";
 
@@ -39,13 +55,14 @@ class TaskListController extends Controller
             $tasksTableShort .= '<tr data-bs-toggle="modal" data-bs-target="#modal' . ++$i . '">';
 
             foreach ($value as $keys => $values) {
-                if ($keys === 'id' || $keys === 'user_id' || $keys === 'created_at' || $keys === 'status' || $keys === 'comment')
+                if ($keys === 'id' || $keys === 'user_id' || $keys === 'created_at' || $keys === 'status' || $keys === 'comment' || $keys === 'deleted')
                     continue;
 
                 $tasksTableShort .= '<td>' . $values . '</td>';
             }
             $tasksTableShort .= '</tr>';
 
+            $id = $value['id'];
             $topic = $value['topic'];
             $type = $value['type'];
             $location = $value['location'];
@@ -71,8 +88,8 @@ class TaskListController extends Controller
                             <p>Комментарий: $comment</p>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-warning">Изменить</button>
-                            <button type="button" class="btn btn-danger">Удалить</button>
+                            <form action="/editor/edit-task" method="GET"><button type="submit" name="id" value="$id" class="btn btn-warning">Изменить</button></form>
+                            <form action="/task-list" method="POST"><button type="submit" name="id" value="$id" class="btn btn-danger">Удалить</button></form>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                         </div>
                     </div>

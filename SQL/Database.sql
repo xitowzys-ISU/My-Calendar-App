@@ -11,11 +11,12 @@ CREATE TABLE `tasks`  (
   `task_status_id` int(0) UNSIGNED NOT NULL,
   `location` varchar(255) NULL,
   `date_and_time` datetime(0) NOT NULL,
-  `duration` datetime(0) NULL,
+  `duration` time(0) NOT NULL,
   `comment` text NULL,
   `created_at` datetime(0) NOT NULL,
   `updated_at` datetime(0) NOT NULL,
   `user_id` int(0) UNSIGNED NOT NULL,
+  `deleted` bool,
   PRIMARY KEY (`id`)
 );
 
@@ -29,7 +30,7 @@ CREATE TABLE `users`  (
   `id` int(0) UNSIGNED NOT NULL AUTO_INCREMENT,
   `login` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `password` varchar(500) NOT NULL,
   PRIMARY KEY (`id`)
 );
 
