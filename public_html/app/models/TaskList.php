@@ -19,7 +19,7 @@ class TaskList extends Model
     public function __construct()
     {
         try {
-            $this->db = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
+            $this->db = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8") );
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             echo $e->getMessage();
@@ -86,7 +86,9 @@ class TaskList extends Model
      */
     public function checkingForDelinquency(int $userId)
     {
-        $this->db->exec('UPDATE `tasks` SET `task_status_id` = 2 WHERE `tasks`.`id` IN (SELECT `id` FROM `tasks` WHERE NOT(ADDTIME(`date_and_time`, ADDTIME(`duration`, "00:10:00")) > NOW()) AND `task_status_id` LIKE 1 AND `user_id` LIKE ' . $userId . ');');
+        //debug('UPDATE `tasks` SET `task_status_id` = 2 WHERE `tasks`.`id` IN (SELECT `id` FROM `tasks` WHERE NOT(ADDTIME(`date_and_time`, ADDTIME(`duration`, "00:10:00")) > NOW()) AND `task_status_id` LIKE 1 AND `user_id` LIKE ' . $userId . ');');
+        //$this->db->exec('UPDATE `tasks` SET `task_status_id` = 2 WHERE `tasks`.`id` IN (SELECT `id` FROM `tasks` WHERE NOT(ADDTIME(`date_and_time`, ADDTIME(`duration`, "00:10:00")) > NOW()) AND `task_status_id` LIKE 1 AND `user_id` LIKE ' . $userId . ');');
+        $this->db->exec('UPDATE `tasks` SET `task_status_id` = 2 WHERE `tasks`.`id` IN (SELECT * FROM ((SELECT `id` FROM `tasks` WHERE NOT(ADDTIME(`date_and_time`, ADDTIME(`duration`, "00:10:00")) > NOW()) AND `task_status_id` LIKE 1 AND `user_id` LIKE ' . $userId . ')) AS t1)');
     }
 
     public function checkStatus($int) {

@@ -18,7 +18,7 @@ class Editor extends Model
     public function __construct()
     {
         try {
-            $this->db = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
+            $this->db = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8") );
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             echo $e->getMessage();
@@ -52,7 +52,7 @@ class Editor extends Model
 
         $this->db->prepare($sql)->execute($params);
 
-        echo ("Ok");
+        header("Location: /");
     }
 
     /**
@@ -70,6 +70,7 @@ class Editor extends Model
         UPDATE `tasks` SET
         `tasks`.`topic` = '$topic',
         `tasks`.`task_type_id` = $type,
+        `tasks`.`task_status_id` = 1,
         `tasks`.`location` = '$place',
         `tasks`.`duration` = '$duration',
         `tasks`.`comment` = '$comment',
@@ -77,8 +78,9 @@ class Editor extends Model
         WHERE `tasks`.`id` LIKE $editTask;
         SQL;
 
-        // debug($sql);
         $this->db->exec($sql);
+
+        header("Location: /");
     }
 
     /**
